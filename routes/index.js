@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'SinglyBank' });
-});
+const cust_controller = require('../controllers/customerController');
+
+router.post('/',cust_controller.login);
+
 // test
 router.get('/test',function(req,res){
   const homeData = {
