@@ -67,7 +67,6 @@ const jwtMiddleWare = function(req,res,next){
    * 'Token eyJhbGciOiJIUzI1NiIsInR...' or 'Bearer eyJhbGciOiJIUzI1NiIsInR...' or something like this.
    */
   const authString = req.headers['authorization'];
-  console.log(authString);
   if(typeof authString === 'string' && authString.indexOf(' ') > -1) {
     const authArray = authString.split(' ');
     const token = authArray[1];
@@ -84,7 +83,7 @@ const jwtMiddleWare = function(req,res,next){
   }
 };
 
-app.use(jwtMiddleWare);
+// app.use(jwtMiddleWare);
 
 app.use('/cust', custRouter);
 app.use('/acct', acctRouter);
