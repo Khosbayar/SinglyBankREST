@@ -84,7 +84,7 @@ const jwtMiddleWare = function(req,res,next){
   }
 };
 
-// app.use(jwtMiddleWare);
+app.use(jwtMiddleWare);
 
 app.use('/cust', custRouter);
 app.use('/acct', acctRouter);
