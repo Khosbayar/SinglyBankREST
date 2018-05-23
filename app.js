@@ -4,6 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var lessMiddleware = require('less-middleware');
 var logger = require('morgan');
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
+
+const serverJWT_Secret = 'kpTxN=)7mX3W3SEJ58Ubt8-';
 
 var indexRouter = require('./routes/index');
 var custRouter = require('./routes/customer');
@@ -28,13 +32,18 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 var app = express();
 
+/**
+ * Setting up CORS, such that it can work together with an Application at another domain / port
+ */
+app.use(cors());
+
 // setting header
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST, PUT, DELETE");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -50,6 +59,33 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Routes
 app.use('/login', indexRouter);
+
+const jwtMiddleWare = function(req,res,next){
+  /**
+   * In JWT it is convention that the token is provided to the server in the authorization header including a prefix,
+   * separated by a space. The authorization header could be:
+   * 'Token eyJhbGciOiJIUzI1NiIsInR...' or 'Bearer eyJhbGciOiJIUzI1NiIsInR...' or something like this.
+   */
+  const authString = req.headers['authorization'];
+  console.log(authString);
+  if(typeof authString === 'string' && authString.indexOf(' ') > -1) {
+    const authArray = authString.split(' ');
+    const token = authArray[1];
+    jwt.verify(token, serverJWT_Secret, (err, decoded) => {
+      if(err) {
+        res.sendStatus(403);
+      } else {
+        req.decoded = decoded;
+        next();
+      }
+    });
+  } else {
+    res.sendStatus(403);
+  }
+};
+
+// app.use(jwtMiddleWare);
+
 app.use('/cust', custRouter);
 app.use('/acct', acctRouter);
 app.use('/tran', tranRouter);
