@@ -2,12 +2,29 @@ const Transaction = require('../model/transaction');
 const Account = require('../model/account');
 
 exports.tran_list = function (req, res, next) {
-    Transaction.find()
-        .sort([['tran_date', 'descending']])
-        .exec(function (err, accts) {
-            if (err) return next(err);
-            res.send(JSON.stringify(accts));
-        });
+    if (!req.query) {
+        Transaction.find()
+            .sort([['tran_date', 'descending']])
+            .exec(function (err, accts) {
+                if (err) return next(err);
+                res.send(JSON.stringify(accts));
+            });
+    } else {
+        const selection = {
+            $and: [{
+                $or: [
+                    { from_acct_no: req.query.acct_no },
+                    { to_acct_no: req.query.acct_no }]
+            },
+            { "tran_date": { "$gte": req.query.from_date, "$lt": req.query.to_date } }]
+        };
+        Transaction.find(selection)
+            .sort([['tran_date', 'descending']])
+            .exec(function (err, accts) {
+                if (err) return next(err);
+                res.send(JSON.stringify(accts));
+            });
+    }
 }
 
 exports.make_tran = function (req, res, next) {
