@@ -15,7 +15,7 @@ const CustSchema = new Schema({
     date_of_birth: { type: Date },
     contact_phone: {type: Number},
     email_address: {type: String},
-    sex: {type: Boolean},
+    sex: {type: String},
     address: { zip: String, state: String, city: String, street: String, no: String },
     last_updated: Date,
     created_date: Date
