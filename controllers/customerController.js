@@ -88,7 +88,9 @@ exports.create_cust = function (req, res, next) {
 
     cust.save().then(function () {
         // res.redirect('/users');
-        res.send("Successful ");
+        res.status(200).send({
+            tran_msg: "Transaction successfull!"
+        });
     }).catch(function (err) {
         if (err) return next(err);
     });
