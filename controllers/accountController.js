@@ -50,7 +50,9 @@ exports.create_acct = function(req,res,next){
     });
 
     acct.save().then(function(){
-        res.send("Successful ");
+        res.status(200).send({
+            tran_msg: "Account successfull!"
+        });
     }).catch(function(err){
         if(err) return next(err);
     });
